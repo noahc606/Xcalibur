@@ -1,0 +1,5 @@
+/.zprivate
+/build
+/include/nch/cpp-utils
+/include/nch/math-utils
+/include/nch/sdl-utils
