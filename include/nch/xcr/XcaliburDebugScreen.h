@@ -2,7 +2,7 @@
 #include <SDL2/SDL.h>
 #include <nch/sdl-utils/text.h>
 
-class DebugScreen {
+namespace nch { class XcaliburDebugScreen {
 public:
     void free();
     
@@ -12,4 +12,4 @@ private:
     int lastW = -1; int lastH = -1;
     SDL_Texture* dbOverlay = nullptr;
     nch::Text dbInfo;
-};
+}; }

@@ -1,18 +1,16 @@
 #include "Main.h"
 #include <nch/cpp-utils/log.h>
+#include <nch/cpp-utils/shell.h>
 #include <nch/cpp-utils/string-utils.h>
 #include <nch/cpp-utils/timer.h>
 #include <nch/sdl-utils/main-loop-driver.h>
 #include <nch/sdl-utils/texture-utils.h>
+#include <nch/xcr/Clipboard.h>
+#include <nch/xcr/Xcalibur.h>
+#include <nch/xcr/XTools.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <string>
-#include "Clipboard.h"
-#include "MiscTools.h"
-#include "Shell.h"
-#include "Xcalibur.h"
-#include "XTools.h"
-
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/XShm.h>
@@ -24,7 +22,7 @@ SDL_PixelFormat* Main::pxFmt = nullptr;
 SDL_Renderer* Main::rend = nullptr;
 SDL_Window* Main::win = nullptr;
 std::string Main::basePath = "???null???";
-DebugScreen Main::dbscr;
+XcaliburDebugScreen Main::dbscr;
 int Main::numTicks = 0;
 
 int main(int argc, char** args) {

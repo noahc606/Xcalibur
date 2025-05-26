@@ -22,4 +22,9 @@ void Clipboard::close()
 }
 
 void Clipboard::set(std::string text) { clipboard_set_text(cb, text.c_str()); }
-std::string Clipboard::get()  { return clipboard_text(cb); }
+std::string Clipboard::get()  {
+    std::stringstream ss;
+    int len = 0;
+    ss << clipboard_text_ex(cb, &len, LCB_CLIPBOARD);
+    return ss.str();
+}

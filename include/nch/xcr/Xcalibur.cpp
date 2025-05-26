@@ -150,6 +150,8 @@ void Xcalibur::streamScreen()
 
 SDL_Surface* Xcalibur::displayToSDLSurf(const nch::Rect& area)
 {
+    updateScreenSurf();
+    
     //Create surface
     SDL_Surface* surf = SDL_CreateRGBSurfaceWithFormat(0, area.r.w, area.r.h, 32, SDL_PIXELFORMAT_ABGR32);
     //Populate surface pixels
@@ -177,11 +179,14 @@ bool Xcalibur::checkDisplayPixels(const std::vector<nch::Vec2i>& pixCoords, cons
 
     return true;
 }
-SDL_Texture* Xcalibur::getScreenTex() {
+SDL_Texture* Xcalibur::getCapturedScreenTex() {
     return screenTex;
 }
-SDL_Surface* Xcalibur::getScreenSurf() {
+SDL_Surface* Xcalibur::getCapturedScreenSurf() {
     return screenSurf;
+}
+Rect Xcalibur::getCapturedScreenRect() {
+    return dispArea;
 }
 std::vector<nch::Rect> Xcalibur::getIgnoredPixAreas() {
     return ignoredPixAreas;

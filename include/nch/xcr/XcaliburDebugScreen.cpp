@@ -1,20 +1,20 @@
-#include "DebugScreen.h"
+#include "XcaliburDebugScreen.h"
 #include <nch/cpp-utils/log.h>
 #include <nch/sdl-utils/texture-utils.h>
 #include <nch/xcr/Xcalibur.h>
 
 using namespace nch;
 
-void DebugScreen::free() {
+void XcaliburDebugScreen::free() {
     SDL_DestroyTexture(dbOverlay);
 }
 
-void DebugScreen::draw(SDL_Renderer* rend)
+void XcaliburDebugScreen::draw(SDL_Renderer* rend)
 {
     /* Rebuild 'dbOverlay if needed */
     {
         int w, h;
-        SDL_QueryTexture(Xcalibur::getScreenTex(), NULL, NULL, &w, &h);
+        SDL_QueryTexture(Xcalibur::getCapturedScreenTex(), NULL, NULL, &w, &h);
         if(lastW!=w || lastH!=h) {
             lastW = w; lastH = h;
             
@@ -43,7 +43,7 @@ void DebugScreen::draw(SDL_Renderer* rend)
     /* Draw Xcalibur debug screen */
     {
         //Draw texture
-        SDL_RenderCopy(rend, Xcalibur::getScreenTex(), NULL, NULL);
+        SDL_RenderCopy(rend, Xcalibur::getCapturedScreenTex(), NULL, NULL);
         //Draw 'dbOverlay'
         SDL_RenderCopy(rend, dbOverlay, NULL, NULL);
     }

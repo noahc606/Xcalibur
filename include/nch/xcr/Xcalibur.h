@@ -12,11 +12,11 @@
 #include <sys/shm.h>
 /**/
 
-class Xcalibur {
+namespace nch { class Xcalibur {
 public:
     /// @brief Initialize the Xcalibur singleton. Allows access to the screen pixels of an X11 display as specified by 'dispArea'.
     /// @param rend The SDL_Renderer* object used to render the screen (or part of it) to an internal SDL_Texture ('screenTex').
-    /// @param dispArea The rectangular area of the screen we are rendering, where xy(0, 0) is the top left.
+    /// @param dispArea The rectangular area of the screen we are capturing, where xy(0, 0) is the top left.
     static void init(SDL_Renderer* rend, const nch::Rect& dispArea);
     /// @brief Free/destroy the Xcalibur singleton. Can be re-'init()'-ted later if needed.
     static void free();
@@ -49,9 +49,11 @@ public:
     /// @return True if all pixel colors match 'pixColor', false otherwise.
     static bool checkDisplayPixels(const std::vector<nch::Vec2i>& pixCoords, const nch::Color& pixColor);
     /// @return The SDL_Texture* representing the screen, which is rebuilt upon every 'streamScreen()' call.
-    static SDL_Texture* getScreenTex();
+    static SDL_Texture* getCapturedScreenTex();
     /// @return An SDL_Surface* which is used to calculate pixel changes. Rebuilt upon every 'updatePixDiffs()' call.
-    static SDL_Surface* getScreenSurf();
+    static SDL_Surface* getCapturedScreenSurf();
+    /// @return The rectangle of the captured part of the screen specified during Xcalibur::init (this is 'dispArea').
+    static Rect getCapturedScreenRect();
     /// @return The list of areas not updated by 'updatePixDiffs()'.
     static std::vector<nch::Rect> getIgnoredPixAreas();
     /// @return The list of pixels that have changed between the 2nd last call and last call of 'updatePixDiffs()'.
@@ -76,4 +78,4 @@ private:
     static std::set<std::pair<int, int>> pixSet;
     static std::vector<nch::Rect> ignoredPixAreas;
     static std::map<std::pair<int, int>, nch::Color> pixDiffs;
-};
+}; }
