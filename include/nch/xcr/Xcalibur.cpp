@@ -2,7 +2,6 @@
 #include <nch/cpp-utils/log.h>
 #include <nch/cpp-utils/timer.h>
 #include <nch/sdl-utils/texture-utils.h>
-#include "Clipboard.h"
 
 using namespace nch;
 
@@ -19,7 +18,6 @@ Rect Xcalibur::dispArea;
 std::set<std::pair<int, int>> Xcalibur::pixSet;
 std::map<std::pair<int, int>, nch::Color> Xcalibur::pixDiffs;
 std::vector<nch::Rect> Xcalibur::ignoredPixAreas;
-
 
 void Xcalibur::init(SDL_Renderer* rend, const Rect& dispArea)
 {
@@ -76,11 +74,11 @@ void Xcalibur::init(SDL_Renderer* rend, const Rect& dispArea)
         TexUtils::setPixelColor(screenSurf, ix, iy, Color(255, 0, 0).getRGBA());
     }
 
-    /* Pixel set */
-    resetPixSet();
-
     /* Valid init by this point */
     initted = true;
+
+    /* Pixel set */
+    resetPixSet();
 }
 void Xcalibur::free()
 {
@@ -104,6 +102,11 @@ void Xcalibur::free()
 
 void Xcalibur::updatePixDiffs()
 {
+    if(!initted) {
+        Log::error(__PRETTY_FUNCTION__, "Xcalibur is not initialized (Xcalibur::init)");
+        return;   
+    }
+
     Xcalibur::streamScreen();
 
     pixDiffs.clear();
@@ -122,10 +125,20 @@ void Xcalibur::updatePixDiffs()
 }
 void Xcalibur::resetScreenSurf()
 {
+    if(!initted) {
+        Log::error(__PRETTY_FUNCTION__, "Xcalibur is not initialized (Xcalibur::init)");
+        return;   
+    }
+
     SDL_FillRect(screenSurf, NULL, SDL_MapRGB(screenSurf->format, 0, 0, 0));
 }
 void Xcalibur::updateScreenSurf()
 {
+    if(!initted) {
+        Log::error(__PRETTY_FUNCTION__, "Xcalibur is not initialized (Xcalibur::init)");
+        return;   
+    }
+
     Xcalibur::streamScreen();
 
     //Copy pixels from X display to SDL_Surface
@@ -138,8 +151,8 @@ void Xcalibur::updateScreenSurf()
 void Xcalibur::streamScreen()
 {
     if(!initted) {
-        Log::error(__PRETTY_FUNCTION__, "Uninitialized");
-        return;
+        Log::error(__PRETTY_FUNCTION__, "Xcalibur is not initialized (Xcalibur::init)");
+        return;   
     }
 
     //Get ximg data from screen
@@ -150,6 +163,11 @@ void Xcalibur::streamScreen()
 
 SDL_Surface* Xcalibur::displayToSDLSurf(const nch::Rect& area)
 {
+    if(!initted) {
+        Log::error(__PRETTY_FUNCTION__, "Xcalibur is not initialized (Xcalibur::init)");
+        return nullptr;   
+    }
+
     updateScreenSurf();
     
     //Create surface
@@ -164,6 +182,11 @@ SDL_Surface* Xcalibur::displayToSDLSurf(const nch::Rect& area)
     return surf;
 }
 nch::Color Xcalibur::getDisplayPixelColor(int x, int y) {
+    if(!initted) {
+        Log::error(__PRETTY_FUNCTION__, "Xcalibur is not initialized (Xcalibur::init)");
+        return nch::Color();   
+    }
+    
     if(x<0 || x>=screenSurf->w || y<0 || y>=screenSurf->h)
         return Color(0, 0, 0, 0);
     Color c = TexUtils::getPixelColor(screenSurf, x, y); c.a = 255;
@@ -171,6 +194,11 @@ nch::Color Xcalibur::getDisplayPixelColor(int x, int y) {
 }
 bool Xcalibur::checkDisplayPixels(const std::vector<nch::Vec2i>& pixCoords, const nch::Color& pixColor)
 {
+    if(!initted) {
+        Log::error(__PRETTY_FUNCTION__, "Xcalibur is not initialized (Xcalibur::init)");
+        return false;
+    }
+
     for(int i = 0; i<pixCoords.size(); i++) {
         Color c = getDisplayPixelColor(pixCoords[i].x, pixCoords[i].y);
         if(c!=pixColor)
@@ -196,8 +224,12 @@ std::map<std::pair<int, int>, nch::Color> Xcalibur::getPixDiffs() {
 }
 
 void Xcalibur::addIgnoredPixSet(const nch::Rect& r) {
+    if(!initted) {
+        Log::error(__PRETTY_FUNCTION__, "Xcalibur is not initialized (Xcalibur::init)");
+        return;
+    }
+    
     ignoredPixAreas.push_back(r);
-
     for(int ix = r.x1(); ix<=r.x2(); ix++)
     for(int iy = r.y1(); iy<=r.y2(); iy++) {
         auto f = pixSet.find(std::make_pair(ix, iy));
@@ -207,6 +239,11 @@ void Xcalibur::addIgnoredPixSet(const nch::Rect& r) {
     }
 }
 void Xcalibur::resetPixSet() {
+    if(!initted) {
+        Log::error(__PRETTY_FUNCTION__, "Xcalibur is not initialized (Xcalibur::init)");
+        return;
+    }
+
     pixSet.clear();
     ignoredPixAreas.clear();
     for(int ix = 0; ix<dispArea.r.w; ix++)

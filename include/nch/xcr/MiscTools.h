@@ -5,6 +5,8 @@
 
 namespace nch { class MiscTools {
 public:
+    static std::string qtGetClipboard();
+
     /// @brief Quickly save a SDL_Surface* to disk, perform Tesseract OCR on it, and return the result. You may want to trim the result using StringUtils::trimmed().
     /// @param surf The SDL_Surface* object to perform OCR on.
     /// @param extraArgs If not "": extra arguments to use for the 'tesseract' command (ex: "--psm 6").

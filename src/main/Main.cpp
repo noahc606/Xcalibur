@@ -5,7 +5,6 @@
 #include <nch/cpp-utils/timer.h>
 #include <nch/sdl-utils/main-loop-driver.h>
 #include <nch/sdl-utils/texture-utils.h>
-#include <nch/xcr/Clipboard.h>
 #include <nch/xcr/Xcalibur.h>
 #include <nch/xcr/XTools.h>
 #include <SDL2/SDL_image.h>
@@ -39,10 +38,6 @@ Main::Main()
         basePath = SDL_GetBasePath();
         //IMG
         IMG_Init(IMG_INIT_PNG);
-        
-        //Clipboard
-        Clipboard::open();
-
         //XCR
         Xcalibur::init(rend, Rect(0, 0, 1920, 1080));
         Xcalibur::addIgnoredPixSet(Rect(0, 1080-45, 1920, 45));
@@ -60,8 +55,6 @@ Main::~Main()
 {
     //Free Xcalibur
     Xcalibur::free();
-    //Close clip
-    Clipboard::close();
     //SDL stuff to cleanup
     SDL_FreeFormat(pxFmt);
     SDL_DestroyRenderer(rend);

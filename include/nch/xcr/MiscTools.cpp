@@ -1,12 +1,31 @@
 #include "MiscTools.h"
+#include <SDL2/SDL_image.h>
+#include <QApplication>
+#include <QClipboard>
+#include <QGuiApplication>
 #include <assert.h>
 #include <nch/cpp-utils/file-utils.h>
 #include <nch/cpp-utils/shell.h>
 #include <nch/cpp-utils/string-utils.h>
-#include <SDL2/SDL_image.h>
+#include <nch/cpp-utils/log.h>
 #include "Xcalibur.h"
 
 using namespace nch;
+
+std::string MiscTools::qtGetClipboard()
+{
+    int argc = 1;
+    char* args[] = { (char*)"AppName" };
+    QApplication app(argc, args);
+    QClipboard* clipboard = QGuiApplication::clipboard();
+    if(clipboard!=nullptr) {
+        QString text = clipboard->text();
+        return text.toStdString();
+    }
+
+    Log::errorv(__PRETTY_FUNCTION__, "QGuiApplication::clipboard()", "clipboard is nullptr");
+    return "???null???";
+}
 
 std::string MiscTools::sdlSurfOCR(SDL_Surface* surf, std::string extraArgs)
 {
