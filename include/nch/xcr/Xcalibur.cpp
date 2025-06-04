@@ -19,7 +19,7 @@ std::set<std::pair<int, int>> Xcalibur::pixSet;
 std::map<std::pair<int, int>, nch::Color> Xcalibur::pixDiffs;
 std::vector<nch::Rect> Xcalibur::ignoredPixAreas;
 
-void Xcalibur::init(SDL_Renderer* rend, const Rect& dispArea)
+void Xcalibur::init(SDL_Renderer* rend, const Rect& displayArea)
 {
     /* Init members */
     if(initted) {
@@ -27,7 +27,6 @@ void Xcalibur::init(SDL_Renderer* rend, const Rect& dispArea)
         return;
     }
     Xcalibur::rend = rend;
-    Xcalibur::dispArea = dispArea;
 
     /* Open/Setup X11 display */
     {
@@ -37,10 +36,28 @@ void Xcalibur::init(SDL_Renderer* rend, const Rect& dispArea)
             printf("Failed to open display...\n");
         }
         //Print info...
-        int numDisplays = ((_XPrivDisplay)(disp))->nscreens;
-        Log::log("Found %d display(s)...", numDisplays);
-        Screen* scr = &((_XPrivDisplay)(disp))->screens[numDisplays-1];
-        Log::log("Using display %d with dimensions %dx%d", numDisplays-1, scr->width, scr->height);
+        int snum = DefaultScreen(disp);
+        int dWidth = DisplayWidth(disp, snum);
+        int dHeight = DisplayHeight(disp, snum);
+        Log::log("Using display with dimensions %dx%d", dWidth, dHeight);
+        //Set 'dispArea'
+        if(displayArea==Rect::createFromTwoPts(0, 0, -1, -1)) {
+            Xcalibur::dispArea = Rect(0, 0, dWidth, dHeight);
+        } else {
+            //Clip dispArea if necessary
+            Rect cDispArea = displayArea;
+            if(displayArea.x1()<0)          cDispArea.r.x = 0;
+            if(displayArea.y1()<0)          cDispArea.r.y = 0;
+            if(displayArea.x2()>dWidth)     cDispArea.r.w = dWidth-cDispArea.r.x;
+            if(displayArea.y2()>dHeight)    cDispArea.r.h = dHeight-cDispArea.r.y;
+            if(cDispArea!=displayArea) {
+                Log::warnv(__PRETTY_FUNCTION__, "clipping 'dispArea'", "Bounds of 'dispArea' exceeds the screen's bounds");
+            }
+
+            Xcalibur::dispArea = cDispArea;
+        }
+
+
     }
 
     /* Create X shared memory image */
@@ -80,6 +97,7 @@ void Xcalibur::init(SDL_Renderer* rend, const Rect& dispArea)
     /* Pixel set */
     resetPixSet();
 }
+
 void Xcalibur::free()
 {
     if(!initted) {

@@ -55,6 +55,7 @@ public:
     /// @param btn The mouse button to press and release
     static void mouseClick(int btn = 1);
     static void activateWindow(int winID);
+    static void shrinkWindowTopLeft(int winID);
     static void maximizeWindow(int winID, nch::Vec2i maximizeButtonPos);
     static void setWindowTitle(int winID, std::string newWinTitle);
 private:

@@ -16,8 +16,8 @@ namespace nch { class Xcalibur {
 public:
     /// @brief Initialize the Xcalibur singleton. Allows access to the screen pixels of an X11 display as specified by 'dispArea'.
     /// @param rend The SDL_Renderer* object used to render the screen (or part of it) to an internal SDL_Texture ('screenTex').
-    /// @param dispArea The rectangular area of the screen we are capturing, where xy(0, 0) is the top left.
-    static void init(SDL_Renderer* rend, const nch::Rect& dispArea);
+    /// @param displayArea The rectangular area of the screen we are capturing, where xy(0, 0) is the top left. If omitted, will be set to the entire screen.
+    static void init(SDL_Renderer* rend, const nch::Rect& displayArea = Rect(0, 0, -1, -1));
     /// @brief Free/destroy the Xcalibur singleton. Can be re-'init()'-ted later if needed.
     static void free();
     

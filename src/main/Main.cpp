@@ -40,7 +40,6 @@ Main::Main()
         IMG_Init(IMG_INIT_PNG);
         //XCR
         Xcalibur::init(rend, Rect(0, 0, 1920, 1080));
-        Xcalibur::addIgnoredPixSet(Rect(0, 1080-45, 1920, 45));
     }
 
     /* Tests */
