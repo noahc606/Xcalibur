@@ -25,20 +25,27 @@ void XcaliburDebugScreen::draw(SDL_Renderer* rend)
         }
     }
 
-    /* Draw ignored pixel areas onto 'dbOverlay' */
+    /* Draw on-screen overlays */
+    TexUtils::clearTexture(rend, dbOverlay);
+    SDL_SetRenderTarget(rend, dbOverlay);
     {
-        TexUtils::clearTexture(rend, dbOverlay);
-        SDL_SetRenderTarget(rend, dbOverlay);
-
+        //Draw ignored pixel areas onto 'dbOverlay'
         auto iAreas = Xcalibur::getIgnoredPixAreas();
         SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
         for(int i = 0; i<iAreas.size(); i++) {
             SDL_SetRenderDrawColor(rend, 255, 0, 0, 100);
             SDL_RenderFillRect(rend, &iAreas[i].r);
         }
+        //Draw green area indicators into 'dbOverlay
+        for(int i = 0; i<indicators.size(); i++) {
+            SDL_SetRenderDrawBlendMode(rend, SDL_BLENDMODE_BLEND);
+            SDL_SetRenderDrawColor(rend, 0, 255, 0, 100);
+            SDL_RenderFillRect(rend, &indicators[i].r);
+        }
 
-        SDL_SetRenderTarget(rend, NULL);
     }
+    SDL_SetRenderTarget(rend, NULL);
+
     
     /* Draw Xcalibur debug screen */
     {
@@ -47,4 +54,9 @@ void XcaliburDebugScreen::draw(SDL_Renderer* rend)
         //Draw 'dbOverlay'
         SDL_RenderCopy(rend, dbOverlay, NULL, NULL);
     }
+}
+
+void XcaliburDebugScreen::setRenderTargetHere(SDL_Renderer* rend)
+{
+    SDL_SetRenderTarget(rend, dbOverlay);
 }

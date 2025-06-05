@@ -5,6 +5,7 @@
 #include <nch/cpp-utils/timer.h>
 #include <nch/sdl-utils/main-loop-driver.h>
 #include <nch/sdl-utils/texture-utils.h>
+#include <nch/xcr/MiscTools.h>
 #include <nch/xcr/Xcalibur.h>
 #include <nch/xcr/XTools.h>
 #include <SDL2/SDL_image.h>
@@ -23,6 +24,7 @@ SDL_Window* Main::win = nullptr;
 std::string Main::basePath = "???null???";
 XcaliburDebugScreen Main::dbscr;
 int Main::numTicks = 0;
+std::vector<Rect> indicators;
 
 int main(int argc, char** args) {
     Main m; return 0;
@@ -45,7 +47,7 @@ Main::Main()
     /* Tests */
     bool cont = tests();
     if(!cont) return;
-
+    
     /* Main loop */
     MainLoopDriver mld(tick, 20, draw, 60);
 }
@@ -74,6 +76,13 @@ void Main::tick()
         Xcalibur::updateScreenSurf();
         Log::log("Color @ (%d, %d)==%s", pos.x, pos.y, Xcalibur::getDisplayPixelColor(pos.x, pos.y).toStringReadable(false).c_str());
     }
+
+    if(numTicks%100==0) {
+        {
+            Timer tim("textbox finding", true);
+            indicators = MiscTools::displayFindTextboxes(Xcalibur::getCapturedScreenRect(), "Verify you are human");
+        }
+    }
 }
 
 void Main::draw()
@@ -85,14 +94,11 @@ void Main::draw()
     SDL_RenderFillRect(rend, NULL);
 
     //Stream screen to Xcalibur
-    {
-        Xcalibur::streamScreen();
-    }
+    Xcalibur::streamScreen();
 
     //Debug screen
+    dbscr.indicators = indicators;
     dbscr.draw(rend);
-
-    //Keyboard
 
     //Render all present objects
     SDL_RenderPresent(rend);
@@ -100,6 +106,7 @@ void Main::draw()
 
 bool Main::tests()
 {
+
     return true;
 }
 

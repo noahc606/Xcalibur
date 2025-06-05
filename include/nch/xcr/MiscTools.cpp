@@ -68,10 +68,10 @@ std::string MiscTools::displayOCR(const Rect& area) {
     return displayOCR(area, "");
 }
 
-Rect MiscTools::displayFindTextbox(const Rect& displayArea, std::string textToFind)
+std::vector<Rect> MiscTools::displayFindTextboxes(const Rect& displayArea, std::string textToFind)
 {
     /* Input checking */
-    if(textToFind.size()==0) return Rect(-1, -1, 0, 0);
+    if(textToFind.size()==0) return {};
     //Get rid of all 
     std::stringstream ss;
     for(int i = 0; i<textToFind.size(); i++) {
@@ -80,6 +80,7 @@ Rect MiscTools::displayFindTextbox(const Rect& displayArea, std::string textToFi
         }
     }
     textToFind = ss.str();
+    std::vector<Rect> res;
 
     /* Get the contents of the .box file generated from Tesseract's OCR */
     std::vector<std::string> fileLines;
@@ -101,29 +102,38 @@ Rect MiscTools::displayFindTextbox(const Rect& displayArea, std::string textToFi
         if(fileLines[i].size()>0)
             ocrStream << fileLines[i].at(0);
     }
-    //Find location of the 'textToFind' within the 'ocrStream'
-    size_t textIdx = ocrStream.str().find(textToFind);
-    //Build 'textbox', if it exists
-    Rect textbox = Rect(-1, -1, 0, 0);
-    if(textIdx!=std::string::npos) {
-        auto firstCoords = StringUtils::parseI64ArraySimple(fileLines[textIdx]);
-        textbox = Rect::createFromTwoPts(firstCoords[1], firstCoords[2], firstCoords[3], firstCoords[4]);
 
-        for(size_t i = textIdx; i<textIdx+textToFind.size(); i++) {
-            auto iCoords = StringUtils::parseI64ArraySimple(fileLines[i]);
-            int x1 = iCoords[1];
-            int y1 = displayArea.r.h-iCoords[2];
-            int x2 = iCoords[3];
-            int y2 = displayArea.r.h-iCoords[4];
-            
-            //Expand textbox until it fits all the desired characers within 'textToFind'.
-            if(x1<textbox.x1()) { textbox.r.x = x1; }
-            if(y1<textbox.y1()) { textbox.r.y = y1; }
-            if(x2>textbox.x2()) { textbox.r.w += (x2-textbox.x2()); }
-            if(y2>textbox.y2()) { textbox.r.h += (y2-textbox.y2()); }
+    //Build 'textbox', if it exists...
+    //Repeatedly find location of the 'textToFind' within the 'ocrStream'
+    for(size_t txtI = ocrStream.str().find(textToFind); txtI!=std::string::npos; txtI = ocrStream.str().find(textToFind, txtI+1)) {
+        Rect textbox = Rect(-1, -1, 0, 0);
+        if(txtI!=std::string::npos) {
+            auto firstCoords = StringUtils::parseI64ArraySimple(fileLines[txtI]);
+            textbox = Rect::createFromTwoPts(firstCoords[1], firstCoords[2], firstCoords[3], firstCoords[4]);
+    
+            for(size_t i = txtI; i<txtI+textToFind.size(); i++) {
+                auto iCoords = StringUtils::parseI64ArraySimple(fileLines[i]);
+                int x1 = iCoords[1];
+                int y1 = iCoords[2];
+                int x2 = iCoords[3];
+                int y2 = iCoords[4];
+                
+                //Expand textbox until it fits all the desired characers within 'textToFind'.
+                if(x1<textbox.x1()) { textbox.r.x = x1; }
+                if(y1<textbox.y1()) { textbox.r.y = y1; }
+                if(x2>textbox.x2()) { textbox.r.w += (x2-textbox.x2()); }
+                if(y2>textbox.y2()) { textbox.r.h += (y2-textbox.y2()); }
+            }
         }
+
+        Rect textboxModded = textbox;
+        textboxModded.r.y = displayArea.r.h-textbox.r.y-textbox.r.h;
+        textbox = textboxModded;
+
+        Log::log("[%d %d %d %d]", textbox.x1(), textbox.y1(), textbox.x2(), textbox.y2());
+        res.push_back(textbox);
     }
 
     //Return
-    return textbox;
+    return res;
 }

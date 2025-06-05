@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <nch/sdl-utils/rect.h>
 #include <string>
+#include <vector>
 
 namespace nch { class MiscTools {
 public:
@@ -26,12 +27,12 @@ public:
     static std::string displayOCR(const Rect& area, std::string extraArgs);
     static std::string displayOCR(const Rect& area);
 
-    /// @brief Use Tesseract's OCR on the Xcalibur display and attempt to return the bounding box of a given piece of text.
+    /// @brief Use Tesseract's OCR on the Xcalibur display and attempt to return the bounding boxes of a given piece of text.
     /// @param area The area of the display to perform OCR on.
     /// @param textToFind The text to find within the 'area' specified.
-    /// @return The rectangle containing the first occurrence of 'textToFind' in absolute coordinates ((0, 0) being @ (x, y) within Xcalibur::init(x, y, w, h)).
+    /// @return A list of rectangles containing the occurrences of 'textToFind' in absolute coordinates ((0, 0) being @ (x, y) within Xcalibur::init(x, y, w, h)).
     /// @return If the OCR could not find the provided 'textToFind', return Rect(-1, -1, 0, 0).
-    static Rect displayFindTextbox(const Rect& area, std::string textToFind);
+    static std::vector<Rect> displayFindTextboxes(const Rect& area, std::string textToFind);
 private:
 
 }; }
