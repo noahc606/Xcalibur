@@ -130,7 +130,6 @@ std::vector<Rect> MiscTools::displayFindTextboxes(const Rect& displayArea, std::
         textboxModded.r.y = displayArea.r.h-textbox.r.y-textbox.r.h;
         textbox = textboxModded;
 
-        Log::log("[%d %d %d %d]", textbox.x1(), textbox.y1(), textbox.x2(), textbox.y2());
         res.push_back(textbox);
     }
 

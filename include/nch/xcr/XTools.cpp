@@ -72,13 +72,11 @@ std::vector<int> XTools::findWindowIDsByClassName(std::string substr)
 int XTools::getWindowIDByTitle(std::string regex)
 {
     try { return findWindowIDsByTitle(regex).at(0); } catch(...){}
-    Log::warnv(__PRETTY_FUNCTION__, "returning -1", "No windows found with titles matching the regex \"%s\"", regex.c_str());
     return -1;
 }
 int XTools::getWindowIDByClassName(std::string regex)
 {
     try { return findWindowIDsByClassName(regex).at(0); } catch(...){}
-    Log::warnv(__PRETTY_FUNCTION__, "returning -1", "No windows found with classnames matching the regex \"%s\"", regex.c_str());
     return -1;
 }
 
