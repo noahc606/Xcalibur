@@ -2,6 +2,7 @@
 #include <nch/cpp-utils/log.h>
 #include <nch/cpp-utils/timer.h>
 #include <nch/sdl-utils/texture-utils.h>
+#include <nch/xcr/MiscTools.h>
 
 using namespace nch;
 
@@ -27,6 +28,9 @@ void Xcalibur::init(SDL_Renderer* rend, const Rect& displayArea)
         return;
     }
     Xcalibur::rend = rend;
+
+    /* Open clipboard */
+    MiscTools::globalInitLibclipboard();
 
     /* Open/Setup X11 display */
     {
@@ -104,6 +108,9 @@ void Xcalibur::free()
         Log::error(__PRETTY_FUNCTION__, "Already freed.");
         return;
     }
+
+    /* Close clipboard */
+    MiscTools::globalFreeLibclipboard();
 
     /* Pointers */
     SDL_DestroyTexture(screenTex);  //Destroy screen texture

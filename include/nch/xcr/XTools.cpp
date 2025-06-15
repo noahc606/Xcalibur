@@ -206,7 +206,7 @@ void XTools::shrinkWindowTopLeft(int winID)
     cmd << "xdotool windowmove " << winID << " 0 0";     Shell::exec(cmd.str()); cmd.str("");
     cmd << "xdotool windowsize " << winID << " 100 100"; Shell::exec(cmd.str()); cmd.str("");
     cmd << "xdotool windowactivate " << winID;           Shell::exec(cmd.str()); cmd.str("");
-    Timer::sleep(25);
+    Timer::sleep(250);
 }
 
 void XTools::maximizeWindow(int winID, Vec2i maximizeButtonPos)
@@ -214,7 +214,7 @@ void XTools::maximizeWindow(int winID, Vec2i maximizeButtonPos)
     shrinkWindowTopLeft(winID);
     XTools::setMouseXY(maximizeButtonPos);
     XTools::mouseClick(1);
-    Timer::sleep(25);
+    Timer::sleep(100);
 }
 
 void XTools::setWindowTitle(int winID, std::string newWinTitle)

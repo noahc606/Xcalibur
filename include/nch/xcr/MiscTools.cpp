@@ -4,6 +4,7 @@
 #include <QClipboard>
 #include <QGuiApplication>
 #include <assert.h>
+#include <libclipboard/libclipboard.h>
 #include <nch/cpp-utils/file-utils.h>
 #include <nch/cpp-utils/shell.h>
 #include <nch/cpp-utils/string-utils.h>
@@ -12,19 +13,56 @@
 
 using namespace nch;
 
+clipboard_c* cb = nullptr;
+
+void MiscTools::globalInitLibclipboard()
+{
+    if(cb!=nullptr) { nch::Log::warn(__PRETTY_FUNCTION__, "Clipboard is already open"); }
+    cb = clipboard_new(NULL);
+    if(cb==NULL) {
+        nch::Log::error(__PRETTY_FUNCTION__, "Clipboard initialization failed");
+    }
+}
+void MiscTools::globalFreeLibclipboard()
+{
+    if(cb==nullptr) { nch::Log::warn(__PRETTY_FUNCTION__, "Clipboard is already closed"); }
+    clipboard_free(cb);
+    cb = nullptr;
+}
+
 std::string MiscTools::qtGetClipboard()
 {
     int argc = 1;
-    char* args[] = { (char*)"AppName" };
+    char* args[] = { (char*)"TempApp" };
     QApplication app(argc, args);
-    QClipboard* clipboard = QGuiApplication::clipboard();
-    if(clipboard!=nullptr) {
-        QString text = clipboard->text();
+    
+    QClipboard* qcb = QGuiApplication::clipboard();
+    if(qcb!=nullptr) {
+        QString text = qcb->text();
         return text.toStdString();
     }
 
     Log::errorv(__PRETTY_FUNCTION__, "QGuiApplication::clipboard()", "clipboard is nullptr");
     return "???null???";
+}
+void MiscTools::lcSetClipboard(const std::string& clipboardText)
+{
+    if(cb==nullptr) {
+        nch::Log::warn(__PRETTY_FUNCTION__, "Clipboard is not open");
+        return;
+    }
+
+    if(clipboardText=="") {
+        clipboard_set_text(cb, "");
+        clipboard_clear(cb, clipboard_mode::LCB_CLIPBOARD);
+        clipboard_clear(cb, clipboard_mode::LCB_MODE_END);
+        clipboard_clear(cb, clipboard_mode::LCB_PRIMARY);
+        clipboard_clear(cb, clipboard_mode::LCB_SECONDARY);
+        clipboard_clear(cb, clipboard_mode::LCB_SELECTION);
+    } else {
+        clipboard_set_text(cb, clipboardText.c_str());
+    }
+    
 }
 
 std::string MiscTools::sdlSurfOCR(SDL_Surface* surf, std::string extraArgs)

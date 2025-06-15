@@ -41,7 +41,7 @@ set_target_properties(${PROJ_OUT} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
 )
 # Add libraries + link them into target
-target_link_libraries(${PROJ_OUT} PUBLIC "-lX11 -lXext -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lQt5Widgets -lQt5Gui -lQt5Core")
+target_link_libraries(${PROJ_OUT} PUBLIC "-lX11 -lXext -lxcb -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lQt5Widgets -lQt5Gui -lQt5Core")
 get_target_property(TARGET_LIBS ${PROJ_OUT} LINK_LIBRARIES)
 message("[NCH] Linked libraries: ${TARGET_LIBS}")
 # Add include directories (everywhere there is a header file: libraries and PROJ src dirs)

@@ -106,7 +106,6 @@ void Main::draw()
 
 bool Main::tests()
 {
-
     return true;
 }
 
