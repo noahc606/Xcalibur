@@ -33,6 +33,7 @@ public:
     /// @brief Use 'getScreenTex()' to get this SDL_Texture. On my hardware this function takes ~10ms for a 1920x1080 screen.
     static void streamScreen();
 
+    static Display* getOpenedDisplay();
     /// @brief Render part of the screen to an SDL_Surface*. 'updateScreenSurf()' should be called before this function.
     /// @param area Rectangular area of Xcalibur's 'disp'lay that should be rendered to an SDL_Surface*.
     /// @return An SDL_Surface* that looks like the specified screen area. You need to free this yourself (SDL_Freesurface(...)).

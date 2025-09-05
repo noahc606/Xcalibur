@@ -186,6 +186,9 @@ void Xcalibur::streamScreen()
     SDL_UpdateTexture(screenTex, NULL, ximg->data, ximg->bytes_per_line);
 }
 
+Display* Xcalibur::getOpenedDisplay() {
+    return disp;
+}
 SDL_Surface* Xcalibur::displayToSDLSurf(const nch::Rect& area)
 {
     if(!initted) {
