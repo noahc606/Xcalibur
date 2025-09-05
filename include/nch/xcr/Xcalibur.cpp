@@ -90,10 +90,10 @@ void Xcalibur::init(SDL_Renderer* rend, const Rect& displayArea)
         Log::errorv(__PRETTY_FUNCTION__, "SDL_CreateRGBSurfaceWithFormat()", SDL_GetError());
         return;
     }
-    for(int ix = 0; ix<screenSurf->w; ix++)
+    for(int ix = 0; ix<screenSurf->w; ix++) {
     for(int iy = 0; iy<screenSurf->h; iy++) {
         TexUtils::setPixelColor(screenSurf, ix, iy, Color(255, 0, 0).getRGBA());
-    }
+    }}
 
     /* Valid init by this point */
     initted = true;
@@ -201,11 +201,11 @@ SDL_Surface* Xcalibur::displayToSDLSurf(const nch::Rect& area)
     //Create surface
     SDL_Surface* surf = SDL_CreateRGBSurfaceWithFormat(0, area.r.w, area.r.h, 32, SDL_PIXELFORMAT_ABGR32);
     //Populate surface pixels
-    for(int ix = 0; ix<area.r.w; ix++)
+    for(int ix = 0; ix<area.r.w; ix++) {
     for(int iy = 0; iy<area.r.h; iy++) {
         Color c = TexUtils::getPixelColor(screenSurf, area.r.x+ix, area.r.y+iy); c.a = 255;
         TexUtils::setPixelColor(surf, ix, iy, c.getRGBA());
-    }
+    }}
     //Return surface
     return surf;
 }
