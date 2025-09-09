@@ -105,7 +105,7 @@ void Xcalibur::init(SDL_Renderer* rend, const Rect& displayArea)
 void Xcalibur::free()
 {
     if(!initted) {
-        Log::error(__PRETTY_FUNCTION__, "Already freed.");
+        Log::error(__PRETTY_FUNCTION__, "Already freed");
         return;
     }
 
