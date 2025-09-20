@@ -37,7 +37,7 @@ void Xcalibur::init(SDL_Renderer* rend, const Rect& displayArea)
         //Open display
         disp = XOpenDisplay(NULL);
         if(disp==NULL) {
-            printf("Failed to open display...\n");
+            Log::error(__PRETTY_FUNCTION__, "Failed to open display...");
         }
         //Print info...
         int snum = DefaultScreen(disp);
