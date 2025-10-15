@@ -45,6 +45,21 @@ std::string MiscTools::qtGetClipboard()
     Log::errorv(__PRETTY_FUNCTION__, "QGuiApplication::clipboard()", "clipboard is nullptr");
     return "???null???";
 }
+std::wstring MiscTools::qtGetClipboardW()
+{
+    int argc = 1;
+    char* args[] = { (char*)"TempApp" };
+    QApplication app(argc, args);
+    
+    QClipboard* qcb = QGuiApplication::clipboard();
+    if(qcb!=nullptr) {
+        QString text = qcb->text();
+        return text.toStdWString();
+    }
+
+    Log::errorv(__PRETTY_FUNCTION__, "QGuiApplication::clipboard()", "clipboard is nullptr");
+    return L"???null???";
+}
 void MiscTools::lcSetClipboard(const std::string& clipboardText)
 {
     if(cb==nullptr) {

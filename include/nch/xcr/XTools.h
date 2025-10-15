@@ -19,7 +19,7 @@ public:
     /// @brief Get an nch::Rect object matching up with the position and dimensions of the window with ID 'windowID'.
     /// @param xWindowID The ID of the window.
     /// @return A rectangle representing the position+dimensions of the window.
-    static nch::Rect getWindowRect(int WindowID);
+    static nch::Rect getWindowRect(int xWindowID);
     /// @brief Finds all visible X11 windows whose window title/classname strings match with the provided 'substr'.
     /// @param substr The substring to match against the X11 window titles/classes.
     /// @return A list of ints corresponding to the IDs of the windows found.

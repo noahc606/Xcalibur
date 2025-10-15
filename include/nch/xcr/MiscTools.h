@@ -9,6 +9,7 @@ public:
     static void globalInitLibclipboard();
     static void globalFreeLibclipboard();
     static std::string qtGetClipboard();
+    static std::wstring qtGetClipboardW();
     static void lcSetClipboard(const std::string& clipboardText);
 
     /// @brief Quickly save a SDL_Surface* to disk, perform Tesseract OCR on it, and return the result. You may want to trim the result using StringUtils::trimmed().
