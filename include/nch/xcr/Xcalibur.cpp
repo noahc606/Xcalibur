@@ -43,7 +43,7 @@ void Xcalibur::init(SDL_Renderer* rend, const Rect& displayArea)
         int snum = DefaultScreen(disp);
         int dWidth = DisplayWidth(disp, snum);
         int dHeight = DisplayHeight(disp, snum);
-        Log::log("Using display with dimensions %dx%d", dWidth, dHeight);
+        Log::log("Using display %s with dimensions %dx%d", DisplayString(disp), dWidth, dHeight);
         //Set 'dispArea'
         if(displayArea==Rect::createFromTwoPts(0, 0, -1, -1)) {
             Xcalibur::dispArea = Rect(0, 0, dWidth, dHeight);
