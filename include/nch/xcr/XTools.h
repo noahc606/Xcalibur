@@ -19,18 +19,23 @@ public:
     /// @brief Get an nch::Rect object matching up with the position and dimensions of the window with ID 'windowID'.
     /// @param xWindowID The ID of the window.
     /// @return A rectangle representing the position+dimensions of the window.
-    static nch::Rect getWindowRect(int xWindowID);
+    static nch::Rect getWindowRect(uint32_t xWindowID);
     /// @brief Finds all visible X11 windows whose window title/classname strings match with the provided 'substr'.
-    /// @param substr The substring to match against the X11 window titles/classes.
+    /// @param substr The substring to match against the X11 window titles/classes/classnames.
     /// @return A list of ints corresponding to the IDs of the windows found.
-    static std::vector<int> findWindowIDsByTitle(std::string substr); static std::vector<int> findWindowIDsByClassName(std::string substr);
-    /// @brief Same as findWindowIDs but only return the first result or -1 if there were no results.
-    /// @param substr The substring to match against the X11 window titles/classes.
+    static std::vector<uint32_t> findVisibleWindowsByTitle(std::string substr);
+    static std::vector<uint32_t> findVisibleWindowsByClass(std::string substr);
+    static std::vector<uint32_t> findVisibleWindowsByClassName(std::string substr);
+    static std::vector<uint32_t> getVisibleWindows();
+    /// @brief Same as findWindowIDs but only return the first result or 0 if there were no results.
+    /// @param substr The substring to match against the X11 window titles/classes/classnames.
     /// @return An int corresponding to the window ID found.
-    static int getWindowIDByTitle(std::string substring); static int getWindowIDByClassName(std::string substr);
-    /// @brief Try to return the ID of the current active window. Upon failure, return -1.
+    static uint32_t getVisibleWindowByTitle(std::string substr);
+    static uint32_t getVisibleWindowByClass(std::string substr);
+    static uint32_t getVisibleWindowByClassName(std::string substr);
+    /// @brief Try to return the ID of the current active window. Upon failure, return 0.
     /// @return ID of the current active window.
-    static int getActiveWindowID();
+    static uint32_t getActiveWindowID();
     /// @brief Given a character, return the xdotool key code associated with typing that character. Returns "" and a warning if an unknown char is inputted.
     /// @brief Supported characters: any char in " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`~1!2@3#4$5%6^7&8*9(0)-_=+/[]\\|;:'\",<.>?\n\t"
     /// @param c The character to get the key code from.
@@ -54,9 +59,10 @@ public:
     /// @brief Do a mouse press and a mouse release in quick succession.
     /// @param btn The mouse button to press and release
     static void mouseClick(int btn = 1);
-    static void activateWindow(int winID);
-    static void shrinkWindowTopLeft(int winID);
-    static void maximizeWindow(int winID, nch::Vec2i maximizeButtonPos);
-    static void setWindowTitle(int winID, std::string newWinTitle);
+    static void activateWindow(uint32_t winID);
+    static void shrinkWindowTopLeft(uint32_t winID);
+    static void wmMaximizeWindow(uint32_t winID);
+    static void wmKillWindow(uint32_t winID);
+    static void setWindowTitle(uint32_t winID, std::string newWinTitle);
 private:
 }; }

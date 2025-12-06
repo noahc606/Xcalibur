@@ -20,7 +20,7 @@ Vec2i XTools::getMouseXY()
     return res;
 }
 
-Rect XTools::getWindowRect(int windowID)
+Rect XTools::getWindowRect(uint32_t windowID)
 {
     StringUtils su;
     Rect res;
@@ -49,42 +49,63 @@ Rect XTools::getWindowRect(int windowID)
     return res;
 }
 
-std::vector<int> XTools::findWindowIDsByTitle(std::string substr)
+std::vector<uint32_t> XTools::findVisibleWindowsByTitle(std::string substr)
 {
-    std::vector<int> res;
-    if(!StringUtils::validateSafeString(substr)) return res;
+    std::vector<uint32_t> ret;
+    if(!StringUtils::validateSafeString(substr)) return ret;
 
-    auto execRes = StringUtils::split(Shell::exec("xdotool search --onlyvisible --name '"+substr+"'"), '\n');
-    for(std::string line : execRes) { try { res.push_back(std::stoi(line)); } catch(...) {} }
-    return res;
+    auto execRet = StringUtils::split(Shell::exec("xdotool search --onlyvisible --name '"+substr+"'"), '\n');
+    for(std::string line : execRet) { try { ret.push_back(std::stoull(line)); } catch(...) {} }
+    return ret;
+}
+std::vector<uint32_t> XTools::findVisibleWindowsByClass(std::string substr)
+{
+    std::vector<uint32_t> ret;
+    if(!StringUtils::validateSpaceless(substr)) return ret;
+
+    auto execRet = StringUtils::split(Shell::exec("xdotool search --onlyvisible --class '"+substr+"'"), '\n');
+    for(std::string line : execRet) { try { ret.push_back(std::stoull(line)); } catch(...) {} }
+    return ret;
+}
+std::vector<uint32_t> XTools::findVisibleWindowsByClassName(std::string substr)
+{
+    std::vector<uint32_t> ret;
+    if(!StringUtils::validateSpaceless(substr)) return ret;
+
+    auto execRet = StringUtils::split(Shell::exec("xdotool search --onlyvisible --classname '"+substr+"'"), '\n');
+    for(std::string line : execRet) { try { ret.push_back(std::stoull(line)); } catch(...) {} }
+    return ret;
 }
 
-std::vector<int> XTools::findWindowIDsByClassName(std::string substr)
+std::vector<uint32_t> XTools::getVisibleWindows()
 {
-    std::vector<int> res;
-    if(!StringUtils::validateSpaceless(substr)) return res;
-
-    auto execRes = StringUtils::split(Shell::exec("xdotool search --onlyvisible --classname '"+substr+"'"), '\n');
-    for(std::string line : execRes) { try { res.push_back(std::stoi(line)); } catch(...) {} }
-    return res;
+    std::vector<uint32_t> ret;
+    auto execRet = StringUtils::split(Shell::exec("xdotool search --onlyvisible ."), '\n');
+    for(std::string line : execRet) { try { ret.push_back(std::stoull(line)); } catch(...) {} }
+    return ret;
 }
 
-int XTools::getWindowIDByTitle(std::string regex)
+uint32_t XTools::getVisibleWindowByTitle(std::string substr)
 {
-    try { return findWindowIDsByTitle(regex).at(0); } catch(...){}
-    return -1;
+    try { return findVisibleWindowsByTitle(substr).at(0); } catch(...){}
+    return 0;
 }
-int XTools::getWindowIDByClassName(std::string regex)
+uint32_t XTools::getVisibleWindowByClass(std::string substr)
 {
-    try { return findWindowIDsByClassName(regex).at(0); } catch(...){}
-    return -1;
+    try { return findVisibleWindowsByClass(substr).at(0); } catch(...){}
+    return 0;
+}
+uint32_t XTools::getVisibleWindowByClassName(std::string substr)
+{
+    try { return findVisibleWindowsByClassName(substr).at(0); } catch(...){}
+    return 0;
 }
 
-int XTools::getActiveWindowID()
+uint32_t XTools::getActiveWindowID()
 {
-    try { return std::stoi(Shell::exec("xdotool getactivewindow")); } catch(...) {}
-    Log::warnv(__PRETTY_FUNCTION__, "returning -1", "Failed to run \"xdotool getactivewindow\"");
-    return -1;
+    try { return std::stoull(Shell::exec("xdotool getactivewindow")); } catch(...) {}
+    Log::warnv(__PRETTY_FUNCTION__, "returning 0", "Failed to run \"xdotool getactivewindow\"");
+    return 0;
 }
 
 std::string XTools::charToKeyCode(char c)
@@ -193,14 +214,14 @@ void XTools::mouseClick(int btn)
     Shell::exec(cmd.str());
 }
 
-void XTools::activateWindow(int winID)
+void XTools::activateWindow(uint32_t winID)
 {
     std::stringstream cmd;
     cmd << "xdotool windowactivate " << winID;
     Shell::exec(cmd.str());
 }
 
-void XTools::shrinkWindowTopLeft(int winID)
+void XTools::shrinkWindowTopLeft(uint32_t winID)
 {
     std::stringstream cmd;
     cmd << "xdotool windowmove " << winID << " 0 0";     Shell::exec(cmd.str()); cmd.str("");
@@ -209,15 +230,16 @@ void XTools::shrinkWindowTopLeft(int winID)
     Timer::sleep(250);
 }
 
-void XTools::maximizeWindow(int winID, Vec2i maximizeButtonPos)
+void XTools::wmMaximizeWindow(uint32_t winID)
 {
-    shrinkWindowTopLeft(winID);
-    XTools::setMouseXY(maximizeButtonPos);
-    XTools::mouseClick(1);
-    Timer::sleep(100);
+    Shell::exec(StringUtils::cat("wmctrl -i -r ", winID, " -b add,maximized_vert,maximized_horz"));
+}
+void XTools::wmKillWindow(uint32_t winID)
+{
+    Shell::exec(StringUtils::cat("wmctrl -ic ", winID));
 }
 
-void XTools::setWindowTitle(int winID, std::string newWinTitle)
+void XTools::setWindowTitle(uint32_t winID, std::string newWinTitle)
 {
     if(!StringUtils::validateInjectionless(newWinTitle)) return;
 
